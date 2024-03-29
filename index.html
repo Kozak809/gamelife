@@ -1,0 +1,133 @@
+<!Doctype html>
+<html>
+<head>
+<title>Game life</title>
+<style>
+body{
+margin:0;
+padding:0;
+}
+
+div{
+margin: 20px;
+}
+
+#canv{
+width:500px;
+height:500px;
+border:3px solid black;
+}
+button{
+}
+</style>
+</head>
+<body>
+<div>
+  <canvas id="canv" style="display:block;" width="500" height="500">Ваш браузер не потдерживает canvas</canvas>
+  <p>Step: <span id="count">0</span>; Life:<span id="life">0</span></p>
+  <button id="start" style="margin-right:10px;">Start</button>
+  <button id="clear" style="margin-right:10px;">Clear</button>
+  <button id="random">Random</button>
+</div>
+<script>
+var canvas = document.getElementById('canv');
+var clear = document.getElementById('clear');
+var random = document.getElementById('random');
+var ctx = canvas.getContext('2d');
+var mas=[];
+var mas1=[];
+var k=0;
+var col=0;
+var timer;
+	
+canvas.onclick=function(event){
+	var x=event.offsetX;
+	var y=event.offsetY;
+	x= Math.floor(x/10);
+	y= Math.floor(y/10);
+    mas[x][y]=1;
+	drawField();
+}
+
+clear.onclick=function(event){
+    for(var i=0;i<50;i++){
+	for(var j=0;j<50;j++){
+	  mas[i][j]=0;
+	  ctx.clearRect(0,0,500,500);
+	}
+  }
+}
+random.onclick=function(event){
+    for(var i=0;i<50;i++){
+	for(var j=0;j<50;j++){
+	  mas[i][j]=Math.round(Math.random());
+	  drawField();
+	}
+  }
+}
+
+function goLife(){
+  for(var i=0;i<50;i++){
+    mas[i]=[];
+	for(var j=0;j<50;j++){
+	  mas[i][j]=0;
+	}
+  }
+}
+
+goLife();
+
+function drawField(){
+  ctx.clearRect(0,0,500,500);
+  for(var i=0;i<50;i++){
+	for(var j=0;j<50;j++){
+	  if (mas[i][j]==1){
+	    ctx.fillRect(i*10,j*10,10,10);
+	  }
+	}
+  }  
+}
+
+function startlife(){
+  col=0;
+  var mas1 = [];
+  for(var i=0;i<50;i++){
+    mas1[i] = [];
+	for(var j=0;j<50;j++){
+	  var neightbors=0;
+	  if (mas[fmp(i)-1][j]==1) neightbors++;
+	  if (mas[i][fpp(j)+1]==1) neightbors++;
+	  if (mas[fpp(i)+1][j]==1) neightbors++;
+	  if (mas[i][fmp(j)-1]==1) neightbors++;
+	  
+	  if (mas[fmp(i)-1][fpp(j)+1]==1) neightbors++;
+	  if (mas[fpp(i)+1][fpp(j)+1]==1) neightbors++;
+	  if (mas[fpp(i)+1][fmp(j)-1]==1) neightbors++;
+	  if (mas[fmp(i)-1][fmp(j)-1]==1) neightbors++;
+	  //(neightbors==2 || neightbors==3) ? mas1[i][j]=1 : mas1[i][j]==0;
+	  if ((mas[i][j]==1) && ((neightbors==3) || (neightbors==2))) mas1[i][j]=1
+      else mas1[i][j]=0;
+      if ((mas[i][j]==0) && (neightbors==3)) mas1[i][j]=1;
+	  if (mas1[i][j]==1)col++;
+	}
+  }
+  mas=mas1;
+  drawField();
+  k++;
+  document.getElementById('count').innerHTML=k;
+  document.getElementById('life').innerHTML=col;
+  timer = setTimeout(startlife,250);
+}
+
+function fmp(i){
+  if (i==0) return 50;
+  else return i;
+}function fpp(i){
+  if (i==49) return -1;
+  else return i;
+}
+
+document.getElementById('start').onclick=startlife;
+</script>
+</body>
+</html>
